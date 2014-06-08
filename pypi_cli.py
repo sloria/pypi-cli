@@ -15,6 +15,7 @@ import sys
 import time
 import math
 from collections import OrderedDict
+from xmlrpclib import ServerProxy
 
 import requests
 from dateutil.parser import parse as dateparse
@@ -316,3 +317,60 @@ class Package(object):
 
     def __repr__(self):
         return '<Package(name={0!r})>'.format(self.name)
+
+
+class Searcher(object):
+    """PyPI package search wrapper that uses the PyPI's XMLRPC API.
+
+    Search algorithm adapted from Supreet Sethi's implementation (MIT Licensed).
+    https://github.com/djinn/pypi-json/blob/master/LICENSE.md
+    """
+
+    STOP_WORDS = set([
+        "a", "and", "are", "as", "at", "be", "but", "by",
+        "for", "if", "in", "into", "is", "it",
+        "no", "not", "of", "on", "or", "such",
+        "that", "the", "their", "then", "there", "these",
+        "they", "this", "to", "was", "will",
+    ])
+
+    NAME_MATCH_WEIGHT = 16
+    CONTAINS_NAME_MULT = 4
+    NAME_IN_SUMMARY_MULT = 2
+
+    def __init__(self, pypi_url='http://pypi.python.org/pypi', client=None):
+        self.pypi_url = pypi_url
+        self.client = client or ServerProxy(pypi_url)
+
+    def score(self, tokens, record):
+        score = 0
+        name, summary = record['name'].lower(), record['summary'].lower()
+        for token in tokens:
+            qtf = 0
+            if token == name:
+                qtf += self.NAME_MATCH_WEIGHT
+            else:
+                n_name_matches = len(re.compile(token).findall(name))
+                qtf += self.CONTAINS_NAME_MULT * n_name_matches
+            if record['summary'] is not None:
+                n_summary_matches = len(re.compile(token).findall(summary))
+                qtf += 2 * n_summary_matches
+            score += qtf
+        return score
+
+    def search(self, query, n=10):
+        tokens = [each.strip() for each in query.strip().lower().split()
+                  if each not in self.STOP_WORDS]
+        results = self.client.search({'name': tokens}, 'and')
+        visited = []
+        nd = []
+        for result in results:
+            name = result['name']
+            try:
+                visited.index(name)
+            except ValueError:
+                nd.append(result)
+                visited.append(name)
+        ranked = [(self.score(tokens, result), result) for result in nd]
+        sorted_results = sorted(ranked, reverse=True)
+        return (result for score, result in sorted_results[:n])
