@@ -149,6 +149,28 @@ def browse(package, homepage):
     echo('Opening PyPI page for "{0}"'.format(package))
     click.termui.launch(url)
 
+@cli.command()
+@click.option('--n-results', '-n', default=10, help='Max number of results to show.')
+@click.argument('query', required=True, type=str)
+def search(query, n_results):
+    """Search for a pypi package.
+
+    \b
+    Examples:
+        \b
+        pypi search requests
+        pypi search 'requests oauth'
+        pypi search requests -n 20
+
+    """
+    searcher = Searcher()
+    results = searcher.search(query, n=n_results)
+    echof('Search results for "{0}"'.format(query), bold=True)
+    for result in results:
+        echo(style(result['name'], fg='cyan'))
+
+# Utilities
+# #########
 
 def lazy_property(fn):
     """Decorator that makes a property lazy-evaluated."""
