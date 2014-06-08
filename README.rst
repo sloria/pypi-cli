@@ -6,8 +6,8 @@ pypi-cli
     :target: http://badge.fury.io/py/pypi-cli
     :alt: Latest version
 
-.. image:: https://travis-ci.org/sloria/pypi.png?branch=master
-    :target: https://travis-ci.org/sloria/pypi
+.. image:: https://travis-ci.org/sloria/pypi-cli.png?branch=master
+    :target: https://travis-ci.org/sloria/pypi-cli
     :alt: Travis-CI
 
 A command-line interface to the Python Package Index (PyPI).
