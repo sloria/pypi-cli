@@ -60,7 +60,7 @@ Use the ``pypi stat`` command to get download statistics for a package.
 Browse to a Package's PyPI or homepage
 --------------------------------------
 
-To open a package's PyPI url in your browser:
+Use ``pypi browse`` to open a package's PyPI url in your browser.
 
 .. code-block:: bash
 
@@ -94,6 +94,23 @@ Use ``pypi search`` to search for PyPI packages.
     wsgioauth
     pmr2.oauth
     django-oauth-plus
+
+
+More
+====
+
+To get help or list available commands:
+
+.. code-block:: bash
+
+    $ pypi --help
+
+You can also get help with subcommands:
+
+.. code-block:: bash
+
+    $ pypi stat --help
+
 
 Get it now
 ==========

@@ -15,7 +15,11 @@ import sys
 import time
 import math
 from collections import OrderedDict
-from xmlrpclib import ServerProxy
+PY2 = int(sys.version[0]) == 2
+if PY2:
+    from xmlrpclib import ServerProxy
+else:
+    from xmlrpc.client import ServerProxy
 
 import requests
 from dateutil.parser import parse as dateparse
