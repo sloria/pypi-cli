@@ -113,7 +113,9 @@ def stat(package, graph):
         avg_downloads = package.average_downloads
         total = package.downloads
         echo()
-        echof("Download statistics for {name}".format(name=name), bold=True)
+        header = "Download statistics for {name}".format(name=name)
+        echo(style(header, bold=True))
+        echo(style('=' * len(header), bold=True))
         if graph:
             echo()
             echo('Downloads by version')
@@ -158,16 +160,20 @@ def lazy_property(fn):
         return getattr(self, attr_name)
     return _lazy_property
 
+def _style_value(value):
+    return style('{:,}'.format(value), fg='yellow')
 
 def bargraph(data, max_key_width=30):
     """Return a bar graph as a string, given a dictionary of data."""
     lines = []
     max_length = min(max(len(key) for key in data.keys()), max_key_width)
     max_val = max(data.values())
-    max_val_length = max(len('{:,}'.format(val)) for val in data.values())
+    max_val_length = max(
+        len(_style_value(val))
+        for val in data.values())
     term_width = get_terminal_size()[0]
     max_bar_width = term_width - MARGIN - (max_length + 3 + max_val_length + 3)
-    template = "{key:{key_width}} [ {value:{val_width},d} ] {bar}"
+    template = "{key:{key_width}} [ {value:{val_width}} ] {bar}"
     for key, value in data.items():
         try:
             bar = int(math.ceil(max_bar_width * value / max_val)) * TICK
@@ -175,10 +181,11 @@ def bargraph(data, max_key_width=30):
             bar = ''
         line = template.format(
             key=key[:max_length],
-            value=value,
+            value=_style_value(value),
             bar=bar,
             key_width=max_length,
-            val_width=max_val_length)
+            val_width=max_val_length
+        )
         lines.append(line)
     return '\n'.join(lines)
 
@@ -238,6 +245,9 @@ class Package(object):
         return ret
 
     def chart(self):
+        def style_version(version):
+            return style(version, fg='cyan', bold=True)
+
         data = OrderedDict()
         for version, dl_count in self.version_downloads.items():
             date = self.version_dates.get(version)
@@ -245,12 +255,12 @@ class Package(object):
             if date:
                 date_formatted = time.strftime(DATE_FORMAT,
                     self.version_dates[version].timetuple())
-            key = "{0:16} {1}".format(
-                style(version, fg='cyan'),
+            key = "{0:20} {1}".format(
+                style_version(version),
                 date_formatted
             )
             data[key] = dl_count
-        return bargraph(data, max_key_width=20 + _COLOR_LEN)
+        return bargraph(data, max_key_width=20 + _COLOR_LEN + _BOLD_LEN)
 
     @lazy_property
     def downloads(self):
