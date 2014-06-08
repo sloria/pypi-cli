@@ -3,13 +3,14 @@ import os
 
 import pytest
 import responses
+from click.testing import CliRunner
 
 import pypi_cli as pypi
 
 HERE = os.path.abspath(os.path.dirname(__file__))
 
-@pytest.yield_fixture(scope='session')
-def mock_api(request):
+@pytest.yield_fixture
+def mock_api():
     """A mock for the PyPI JSON API."""
     with open(os.path.join(HERE, 'response.json'), 'r') as fp:
         webargs_response = fp.read()
@@ -47,3 +48,8 @@ def mock_api(request):
 @pytest.fixture
 def package():
     return pypi.Package('webargs')
+
+
+@pytest.fixture(scope='function')
+def runner(mock_api):
+    return CliRunner()

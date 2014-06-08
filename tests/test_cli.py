@@ -1,25 +1,37 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from subprocess import check_output, CalledProcessError
+import mock
 import pytest
 
 import pypi_cli as pypi
 
+@pytest.mark.usefixtures('mock_api')
+class TestStat:
 
-def test_pypi_cmd_without_args_exits_with_nonzero_code():
-    with pytest.raises(CalledProcessError):
-        run_cmd('pypi')
+    def test_missing_package_arg(self, runner):
+        result = runner.invoke(pypi.cli, ['stat'])
+        assert result.exit_code > 0
+
+    def test_with_package(self, runner):
+        result = runner.invoke(pypi.cli, ['stat', 'webargs'])
+        assert result.exit_code == 0
+        assert 'Download statistics for webargs' in result.output
+
+class TestBrowse:
+
+    def test_missing_package_arg(self, runner):
+        result = runner.invoke(pypi.cli, ['browse'])
+        assert result.exit_code > 0
+
+    @mock.patch('pypi_cli.click.termui.launch')
+    def test_with_package(self, mock_launch, runner):
+        result = runner.invoke(pypi.cli, ['browse', 'webargs'])
+        assert result.exit_code == 0
+        assert mock_launch.called is True
 
 
-def test_pypi_cmd_version():
-    assert run_cmd('pypi -v') == pypi.__version__ + '\n'
-    assert run_cmd('pypi --version') == pypi.__version__ + '\n'
-
-
-def test_no_division_by_zero_in_bargraph():
-    assert pypi.TICK not in pypi.bargraph({'foo': 0})
-
-
-def run_cmd(cmd):
-    '''Run a shell command `cmd` and return its output.'''
-    return check_output(cmd, shell=True).decode('utf-8')
+def test_version(runner):
+    result = runner.invoke(pypi.cli, ['-v'])
+    assert result.output == pypi.__version__ + '\n'
+    result = runner.invoke(pypi.cli, ['--version'])
+    assert result.output == pypi.__version__ + '\n'
