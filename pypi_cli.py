@@ -113,14 +113,15 @@ def stat(package, graph):
     for name_or_url in package:
         package = get_package(name_or_url, client)
         if not package:
-            echo(style('Invalid name or URL: "{name}"'.format(name=name_or_url), fg='red'),
-                  file=sys.stderr)
+            echo(style(
+                'Invalid name or URL: "{name}"'.format(name=name_or_url), fg='red'),
+                file=sys.stderr)
             continue
         try:
             version_downloads = package.version_downloads
         except NotFoundError:
-            echof('No versions found for "{0}". Skipping. . .'.format(package.name),
-                fg='red')
+            echo(style('No versions found for "{0}". Skipping. . .'.format(package.name),
+                fg='red'), file=sys.stderr)
             continue
         echo("Fetching statistics for '{url}'. . .".format(url=package.package_url))
         min_ver, min_downloads = package.min_version
@@ -199,17 +200,22 @@ def search(query, n_results):
 def info(package, long_description, classifiers):
     """Get info about a package or packages.
     """
-    # TODO: repetition here. rethink.
     client = requests.Session()
     for name_or_url in package:
         package = get_package(name_or_url, client)
         if not package:
-            echo(style('Invalid name or URL: "{name}"'.format(name=name_or_url), fg='red'),
-                  file=sys.stderr)
+            echo(style(
+                'Invalid name or URL: "{name}"'.format(name=name_or_url), fg='red'),
+                file=sys.stderr)
             continue
 
         # Name and summary
-        info = package.data['info']
+        try:
+            info = package.data['info']
+        except NotFoundError:
+            echo(style('No versions found for "{0}". Skipping. . .'.format(package.name),
+                fg='red'), file=sys.stderr)
+            continue
         echo_header(name_or_url)
         echo(info.get('summary', ''))
 
