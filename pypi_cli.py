@@ -52,16 +52,20 @@ def echof(s, *args, **kwargs):
     expose_value=False,
     is_eager=True)
 def cli():
-    """The pypi CLI."""
+    """The PyPI CLI.
+
+    \b
+    Examples:
+        \b
+        pypi stat Django
+        pypi browse Flask
+    """
     pass
 
 
 def abort_not_found(name):
-    msg = style('No versions of "{0}" were found. Please try your search '
-        'again. NOTE: Case matters.'.format(name),
-        fg='red')
-    echo(msg, file=sys.stderr)
-    sys.exit(1)
+    raise click.ClickException('No versions of "{0}" were found. Please try '
+        'your search again. NOTE: Case matters.'.format(name))
 
 
 @cli.command()
