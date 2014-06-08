@@ -11,6 +11,10 @@ REQUIRES = [
     'click==2.0'
 ]
 
+if 'win32' in str(sys.platform).lower():
+    # Terminal colors for Windows
+    REQUIRES.append('colorama>=0.2.4')
+
 TESTS_REQUIRE = [
     'pytest',
     'responses'
