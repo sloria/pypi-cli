@@ -10,7 +10,11 @@ pypi-cli
     :target: https://travis-ci.org/sloria/pypi-cli
     :alt: Travis-CI
 
-A command-line interface to the Python Package Index (PyPI).
+A command-line interface to the Python Package Index (PyPI). Get package info, download statistics, and more.
+
+.. image:: https://dl.dropboxusercontent.com/u/1693233/github/pypi-cli.png
+    :alt: Screenshot
+    :target: http://konch.readthedocs.org
 
 
 Examples
