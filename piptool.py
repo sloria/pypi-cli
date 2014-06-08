@@ -57,6 +57,11 @@ def cli():
     """The piptool CLI."""
     pass
 
+def abort_not_found(name):
+    echo('No versions of "{0}" were found. Please try your search again.'.format(name), file=sys.stderr)
+    sys.exit(1)
+
+
 @cli.command()
 @click.option('--graph/--no-graph', '-g/-q', default=True, help="Output a graph of download counts.")
 @click.argument('package', nargs=-1, required=True)
@@ -79,8 +84,7 @@ def stat(package, graph):
         try:
             version_downloads = package.version_downloads
         except NotFoundError:
-            echo('No versions of "{0}" were found.'.format(name), file=sys.stderr)
-            sys.exit(1)
+            abort_not_found(name)
         min_ver, min_downloads = package.min_version
         max_ver, max_downloads = package.max_version
         avg_downloads = package.average_downloads
@@ -101,6 +105,18 @@ def stat(package, graph):
         echo('Last week:   {weekly:12,}'.format(weekly=package.downloads_last_week))
         echo('Last month:  {monthly:12,}'.format(monthly=package.downloads_last_month))
         echo()
+
+@cli.command()
+@click.argument('package', required=True)
+def browse(package):
+    """Browse to a package's PyPI or project homepage."""
+    p = Package(package)
+    try:
+        url = p.package_url
+    except NotFoundError:
+        abort_not_found(package)
+    echo('Opening PyPI page for "{0}"'.format(package))
+    click.termui.launch(url)
 
 
 def lazy_property(fn):
@@ -241,6 +257,10 @@ class Package(object):
     @property
     def downloads_last_month(self):
         return self.data['info']['downloads']['last_month']
+
+    @property
+    def package_url(self):
+        return self.data['info']['package_url']
 
     def __repr__(self):
         return '<Package(name={0!r})>'.format(self.name)
