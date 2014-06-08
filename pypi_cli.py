@@ -1,8 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""pypi-cli
+"""
+    pypi_cli
+    ~~~~~~~~
 
-Command line interface for the Python Package Index.
+    A command line interface to the Python Package Index.
+
+    :copyright: (c) 2014 by Steven Loria.
+    :license: BSD, see LICENSE for more details.
 """
 from __future__ import unicode_literals, division, print_function
 import re
@@ -50,15 +55,21 @@ def echof(s, *args, **kwargs):
     is_flag=True,
     callback=print_version,
     expose_value=False,
-    is_eager=True)
+    is_eager=True,
+    help="Show the current pypi-cli version.")
 def cli():
-    """The PyPI CLI.
+    """The pypi CLI.
 
     \b
     Examples:
         \b
         pypi stat Django
         pypi browse Flask
+
+    To get help with a subcommand, add the --help option after the command.
+
+    \b
+        pypi stat --help
     """
     pass
 
@@ -75,7 +86,10 @@ def abort_not_found(name):
 def stat(package, graph):
     """Print download statistics for a package.
 
-    Example: pypi stat requests
+    \b
+    Example:
+
+        pypi stat requests
     """
     client = requests.Session()
     for name_or_url in package:
@@ -91,9 +105,11 @@ def stat(package, graph):
             version_downloads = package.version_downloads
         except NotFoundError:
             abort_not_found(name)
-        echo("Fetching statistics for '{url}'. . .".format(url=pypi_url))
+        echo("Fetching statistics for '{url}'. . .".format(url=package.package_url))
         min_ver, min_downloads = package.min_version
         max_ver, max_downloads = package.max_version
+        if min_ver is None or max_ver is None:
+            raise click.ClickException('Package has no releases')
         avg_downloads = package.average_downloads
         total = package.downloads
         echo()
@@ -238,19 +254,29 @@ class Package(object):
 
     @lazy_property
     def downloads(self):
-        """Total download count."""
+        """Total download count.
+
+        :return: A tuple of the form (version, n_downloads)
+        """
         return sum(self.version_downloads.values())
 
     @lazy_property
     def max_version(self):
-        """Version with the most downloads."""
+        """Version with the most downloads.
+
+        :return: A tuple of the form (version, n_downloads)
+        """
         data = self.version_downloads
+        if not data:
+            return None, 0
         return max(data.items(), key=lambda item: item[1])
 
     @lazy_property
     def min_version(self):
         """Version with the fewest downloads."""
         data = self.version_downloads
+        if not data:
+            return (None, 0)
         return min(data.items(), key=lambda item: item[1])
 
     @lazy_property
