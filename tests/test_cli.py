@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 from subprocess import check_output, CalledProcessError
 import pytest
 
-import pypi_cli
+import pypi_cli as pypi
 
 
 def test_pypi_cmd_without_args_exits_with_nonzero_code():
