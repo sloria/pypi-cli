@@ -9,7 +9,7 @@ import click
 konch.config({
     'context': {
         'Package': Package,
-        'pypi': pypi,
+        'pypi': pypi_cli,
         'rget': requests.get,
         'rpost': requests.post,
         'click': click
