@@ -57,7 +57,7 @@ def read(fname):
 setup(
     name='pypi-cli',
     version=__version__,
-    description='A CLI for getting PyPI package info and metrics',
+    description='A command-line interface to the Python Package Index (PyPI).',
     long_description=(read("README.rst") + '\n\n' +
                       read('HISTORY.rst')),
     author='Steven Loria',
