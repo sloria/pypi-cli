@@ -11,6 +11,11 @@ REQUIRES = [
     'click==2.0'
 ]
 
+TESTS_REQUIRE = [
+    'pytest',
+    'responses'
+]
+
 class PyTest(TestCommand):
     def finalize_options(self):
         TestCommand.finalize_options(self)
@@ -38,7 +43,7 @@ def find_version(fname):
         raise RuntimeError('Cannot find version information')
     return version
 
-__version__ = find_version("piptool.py")
+__version__ = find_version("pypi_cli.py")
 
 PUBLISH_CMD = "python setup.py register sdist upload"
 TEST_PUBLISH_CMD = 'python setup.py register -r test sdist upload -r test'
@@ -57,18 +62,18 @@ def read(fname):
     return content
 
 setup(
-    name='piptool',
+    name='pypi-cli',
     version=__version__,
-    description='A CLI for getting PyPI package info and analytics',
+    description='A CLI for getting PyPI package info and metrics',
     long_description=(read("README.rst") + '\n\n' +
                       read('HISTORY.rst')),
     author='Steven Loria',
     author_email='sloria1@gmail.com',
-    url='https://github.com/sloria/piptool',
+    url='https://github.com/sloria/pypi-cli',
     install_requires=REQUIRES,
     license=read("LICENSE"),
     zip_safe=False,
-    keywords='piptool pypi statistics download count metrics',
+    keywords='pypi cli command line pipstat pip statistics download count metrics analytics',
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
@@ -81,12 +86,12 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: Implementation :: CPython',
     ],
-    py_modules=["piptool"],
+    py_modules=["pypi_cli"],
     entry_points={
         'console_scripts': [
-            "piptool = piptool:cli"
+            "pypi = pypi_cli:cli"
         ]
     },
-    tests_require=['pytest', 'responses'],
+    tests_require=TESTS_REQUIRE,
     cmdclass={'test': PyTest}
 )

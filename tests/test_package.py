@@ -4,7 +4,7 @@ import os
 import responses
 import pytest
 
-import piptool
+import pypi_cli
 
 HERE = os.path.abspath(os.path.dirname(__file__))
 
@@ -29,7 +29,7 @@ def teardown_module():
 
 @pytest.fixture
 def package():
-    return piptool.Package('webargs')
+    return pypi.Package('webargs')
 
 class TestPackage:
 

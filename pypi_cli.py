@@ -1,10 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""piptool
-Prints download statistics for PyPI packages.
+"""pypi-cli
 
-Usage:
-    piptool <package> ...
+Command line interface for the Python Package Index.
 """
 from __future__ import unicode_literals, division, print_function
 import re
@@ -24,16 +22,16 @@ __author__ = "Steven Loria"
 __license__ = "MIT"
 
 DATE_FORMAT = "%y/%m/%d"
-MARGIN = 5
+MARGIN = 3
 TICK = '*'
 DEFAULT_PYPI = 'http://pypi.python.org/pypi'
 PYPI_RE = re.compile('''^(?:(?P<pypi>https?://[^/]+/pypi)/)?
                         (?P<name>[-A-Za-z0-9.]+)
                         (?:/(?P<version>[-A-Za-z0-9.]+))?$''', re.X)
 
-# String length added by bold formatting
+# Number of characters added by bold formatting
 _BOLD_LEN = 8
-# String length added by color formatting
+# Number of characters added by color formatting
 _COLOR_LEN = 9
 
 def print_version(ctx, param, value):
@@ -54,37 +52,42 @@ def echof(s, *args, **kwargs):
     expose_value=False,
     is_eager=True)
 def cli():
-    """The piptool CLI."""
+    """The pypi CLI."""
     pass
 
+
 def abort_not_found(name):
-    echo('No versions of "{0}" were found. Please try your search again.'.format(name), file=sys.stderr)
+    msg = style('No versions of "{0}" were found. Please try your search '
+        'again. NOTE: Case matters.'.format(name),
+        fg='red')
+    echo(msg, file=sys.stderr)
     sys.exit(1)
 
 
 @cli.command()
-@click.option('--graph/--no-graph', '-g/-q', default=True, help="Output a graph of download counts.")
+@click.option('--graph/--no-graph', '-g/-q', default=True,
+    help="Output a graph of download counts.")
 @click.argument('package', nargs=-1, required=True)
 def stat(package, graph):
     """Print download statistics for a package.
 
-    Example: piptool stat requests
+    Example: pypi stat requests
     """
     client = requests.Session()
-    for input_name in package:
-        m = PYPI_RE.match(input_name)
+    for name_or_url in package:
+        m = PYPI_RE.match(name_or_url)
         if not m:
-            echo('Invalid name or URL: "{name}"'.format(name=input_name),
+            echo('Invalid name or URL: "{name}"'.format(name=name_or_url),
                   file=sys.stderr)
             continue
         pypi_url = m.group('pypi') or DEFAULT_PYPI
         name = m.group('name')
-        echo("Fetching statistics for '{url}'. . .".format(url=pypi_url))
         package = Package(name, pypi_url=pypi_url, client=client)
         try:
             version_downloads = package.version_downloads
         except NotFoundError:
             abort_not_found(name)
+        echo("Fetching statistics for '{url}'. . .".format(url=pypi_url))
         min_ver, min_downloads = package.min_version
         max_ver, max_downloads = package.max_version
         avg_downloads = package.average_downloads
@@ -107,14 +110,19 @@ def stat(package, graph):
         echo()
 
 @cli.command()
+@click.option('--homepage', is_flag=True, default=False)
 @click.argument('package', required=True)
-def browse(package):
+def browse(package, homepage):
     """Browse to a package's PyPI or project homepage."""
     p = Package(package)
     try:
-        url = p.package_url
+        if homepage:
+            url = p.home_page
+        else:
+            url = p.package_url
     except NotFoundError:
         abort_not_found(package)
+
     echo('Opening PyPI page for "{0}"'.format(package))
     click.termui.launch(url)
 
@@ -261,6 +269,10 @@ class Package(object):
     @property
     def package_url(self):
         return self.data['info']['package_url']
+
+    @property
+    def home_page(self):
+        return self.data['info']['home_page']
 
     def __repr__(self):
         return '<Package(name={0!r})>'.format(self.name)

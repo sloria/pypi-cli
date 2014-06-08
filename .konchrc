@@ -2,14 +2,14 @@
 import konch
 
 import requests
-import piptool
-from piptool import Package
+import pypi_cli
+from pypi_cli import Package
 import click
 
 konch.config({
     'context': {
         'Package': Package,
-        'piptool': piptool,
+        'pypi': pypi,
         'rget': requests.get,
         'rpost': requests.post,
         'click': click
