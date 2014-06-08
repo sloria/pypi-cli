@@ -49,17 +49,6 @@ def find_version(fname):
 
 __version__ = find_version("pypi_cli.py")
 
-PUBLISH_CMD = "python setup.py register sdist upload"
-TEST_PUBLISH_CMD = 'python setup.py register -r test sdist upload -r test'
-
-if 'publish' in sys.argv:
-    status = subprocess.call(PUBLISH_CMD, shell=True)
-    sys.exit(status)
-
-if 'publish_test' in sys.argv:
-    status = subprocess.call(TEST_PUBLISH_CMD, shell=True)
-    sys.exit()
-
 def read(fname):
     with open(fname) as fp:
         content = fp.read()

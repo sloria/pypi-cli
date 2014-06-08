@@ -140,13 +140,13 @@ def browse(package, homepage):
     p = Package(package)
     try:
         if homepage:
+            echof('Opening homepage for "{0}"...'.format(package), bold=True)
             url = p.home_page
         else:
+            echof('Opening PyPI page for "{0}"...'.format(package), bold=True)
             url = p.package_url
     except NotFoundError:
         abort_not_found(package)
-
-    echo('Opening PyPI page for "{0}"'.format(package))
     click.termui.launch(url)
 
 @cli.command()
