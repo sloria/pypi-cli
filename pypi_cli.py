@@ -7,7 +7,7 @@
     A command line interface to the Python Package Index.
 
     :copyright: (c) 2014 by Steven Loria.
-    :license: BSD, see LICENSE for more details.
+    :license: MIT, see LICENSE for more details.
 """
 from __future__ import unicode_literals, division, print_function
 import re
@@ -27,7 +27,7 @@ import click
 from click import echo, style
 from click.termui import get_terminal_size
 
-__version__ = "0.1.0-dev"
+__version__ = "0.1.0"
 __author__ = "Steven Loria"
 __license__ = "MIT"
 

@@ -1,6 +1,5 @@
 import sys
 import re
-import subprocess
 
 from setuptools import setup
 from setuptools.command.test import test as TestCommand
