@@ -6,4 +6,4 @@ Changelog
 =================
 
 - First release.
-- Supports ``stat``, ``browse``, and ``search`` commands.
+- Supports ``stat``, ``browse``, and ``search``, and ``info`` commands.

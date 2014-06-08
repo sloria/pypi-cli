@@ -83,6 +83,9 @@ def abort_not_found(name):
     raise click.ClickException('No versions of "{0}" were found. Please try '
         'your search again. NOTE: Case matters.'.format(name))
 
+def echo_header(text):
+    echo(style(text, bold=True))
+    echo(style('=' * len(text), bold=True))
 
 @cli.command()
 @click.option('--graph/--no-graph', '-g/-q', default=True,
@@ -119,8 +122,7 @@ def stat(package, graph):
         total = package.downloads
         echo()
         header = "Download statistics for {name}".format(name=name)
-        echo(style(header, bold=True))
-        echo(style('=' * len(header), bold=True))
+        echo_header(header)
         if graph:
             echo()
             echo('Downloads by version')
@@ -131,10 +133,14 @@ def stat(package, graph):
         echo("Avg downloads:   {avg_downloads:12,}".format(**locals()))
         echo("Total downloads: {total:12,}".format(**locals()))
         echo()
-        echo('Last day:    {daily:12,}'.format(daily=package.downloads_last_day))
-        echo('Last week:   {weekly:12,}'.format(weekly=package.downloads_last_week))
-        echo('Last month:  {monthly:12,}'.format(monthly=package.downloads_last_month))
+        echo_download_summary(package)
         echo()
+
+def echo_download_summary(package):
+    echo('Last day:    {daily:12,}'.format(daily=package.downloads_last_day))
+    echo('Last week:   {weekly:12,}'.format(weekly=package.downloads_last_week))
+    echo('Last month:  {monthly:12,}'.format(monthly=package.downloads_last_month))
+
 
 @cli.command()
 @click.option('--homepage', is_flag=True, default=False)
@@ -172,6 +178,71 @@ def search(query, n_results):
     echof('Search results for "{0}"'.format(query), bold=True)
     for result in results:
         echo(style(result['name'], fg='cyan'))
+
+@cli.command()
+@click.option('--classifiers', '-c',
+    is_flag=True, default=False, help='Show classifiers.')
+@click.option('--long-description', '-l',
+    is_flag=True, default=False, help='Show long description.')
+@click.argument('package', nargs=-1, required=True)
+def info(package, long_description, classifiers):
+    """Get info about a package or packages.
+    """
+    # TODO: repetition here. rethink.
+    client = requests.Session()
+    for name_or_url in package:
+        m = PYPI_RE.match(name_or_url)
+        if not m:
+            echo('Invalid name or URL: "{name}"'.format(name=name_or_url),
+                  file=sys.stderr)
+            continue
+        pypi_url = m.group('pypi') or DEFAULT_PYPI
+        name = m.group('name')
+        package = Package(name, pypi_url=pypi_url, client=client)
+
+        # Name and summary
+        info = package.data['info']
+        echo_header(name_or_url)
+        echo(info.get('summary', ''))
+
+        # Version info
+        echo()
+        echo('Latest release:   {version:12}'.format(version=info['version']))
+
+        # Long description
+        if long_description:
+            echo()
+            echo(info['description'])
+
+        # Download info
+        echo()
+        echo_download_summary(package)
+        echo()
+
+        # Author info
+        echo()
+        author, author_email = info.get('author'), info.get('author_email')
+        if author:
+            echo('Author:   {author:12}'.format(**locals()))
+        if author_email:
+            echo('Author email: {author_email:12}'.format(**locals()))
+
+        # URLS
+        echo()
+        echo('PyPI URL:  {pypi_url:12}'.format(pypi_url=package.package_url))
+        echo('Home Page: {home_page:12}'.format(home_page=package.home_page))
+
+
+        # Classifiers
+        if classifiers:
+            echo()
+            echo('Classifiers: ')
+            for each in info.get('classifiers', []):
+                echo('\t' + each)
+        echo()
+
+
+
 
 # Utilities
 # #########
@@ -339,7 +410,7 @@ class Package(object):
 
     @property
     def home_page(self):
-        return self.data['info']['home_page']
+        return self.data['info'].get('home_page', None)
 
     def __repr__(self):
         return '<Package(name={0!r})>'.format(self.name)
