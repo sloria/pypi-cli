@@ -17,6 +17,12 @@ class TestStat:
         assert result.exit_code == 0
         assert 'Download statistics for webargs' in result.output
 
+    def test_with_package_url(self, runner):
+        result = runner.invoke(pypi.cli, ['stat', 'http://pypi.python.org/pypi/webargs'])
+        assert result.exit_code == 0
+        assert 'Download statistics for webargs' in result.output
+
+@pytest.mark.usefixtures('mock_api')
 class TestBrowse:
 
     def test_missing_package_arg(self, runner):
@@ -28,7 +34,6 @@ class TestBrowse:
         result = runner.invoke(pypi.cli, ['browse', 'webargs'])
         assert result.exit_code == 0
         assert mock_launch.called is True
-
 
 def test_version(runner):
     result = runner.invoke(pypi.cli, ['-v'])
