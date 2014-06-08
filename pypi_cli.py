@@ -87,6 +87,16 @@ def echo_header(text):
     echo(style(text, bold=True))
     echo(style('=' * len(text), bold=True))
 
+
+def get_package(name_or_url, client=None):
+    m = PYPI_RE.match(name_or_url)
+    if not m:
+        return None
+    pypi_url = m.group('pypi') or DEFAULT_PYPI
+    name = m.group('name')
+    return Package(name, pypi_url=pypi_url, client=client)
+
+
 @cli.command()
 @click.option('--graph/--no-graph', '-g/-q', default=True,
     help="Output a graph of download counts.")
@@ -101,18 +111,17 @@ def stat(package, graph):
     """
     client = requests.Session()
     for name_or_url in package:
-        m = PYPI_RE.match(name_or_url)
-        if not m:
-            echo('Invalid name or URL: "{name}"'.format(name=name_or_url),
+        package = get_package(name_or_url, client)
+        if not package:
+            echo(style('Invalid name or URL: "{name}"'.format(name=name_or_url), fg='red'),
                   file=sys.stderr)
             continue
-        pypi_url = m.group('pypi') or DEFAULT_PYPI
-        name = m.group('name')
-        package = Package(name, pypi_url=pypi_url, client=client)
         try:
             version_downloads = package.version_downloads
         except NotFoundError:
-            abort_not_found(name)
+            echof('No versions found for "{0}". Skipping. . .'.format(package.name),
+                fg='red')
+            continue
         echo("Fetching statistics for '{url}'. . .".format(url=package.package_url))
         min_ver, min_downloads = package.min_version
         max_ver, max_downloads = package.max_version
@@ -121,7 +130,7 @@ def stat(package, graph):
         avg_downloads = package.average_downloads
         total = package.downloads
         echo()
-        header = "Download statistics for {name}".format(name=name)
+        header = "Download statistics for {name}".format(name=package.name)
         echo_header(header)
         if graph:
             echo()
@@ -179,6 +188,8 @@ def search(query, n_results):
     for result in results:
         echo(style(result['name'], fg='cyan'))
 
+
+
 @cli.command()
 @click.option('--classifiers', '-c',
     is_flag=True, default=False, help='Show classifiers.')
@@ -191,14 +202,11 @@ def info(package, long_description, classifiers):
     # TODO: repetition here. rethink.
     client = requests.Session()
     for name_or_url in package:
-        m = PYPI_RE.match(name_or_url)
-        if not m:
-            echo('Invalid name or URL: "{name}"'.format(name=name_or_url),
+        package = get_package(name_or_url, client)
+        if not package:
+            echo(style('Invalid name or URL: "{name}"'.format(name=name_or_url), fg='red'),
                   file=sys.stderr)
             continue
-        pypi_url = m.group('pypi') or DEFAULT_PYPI
-        name = m.group('name')
-        package = Package(name, pypi_url=pypi_url, client=client)
 
         # Name and summary
         info = package.data['info']
