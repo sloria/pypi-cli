@@ -16,6 +16,17 @@ A command-line interface to the Python Package Index (PyPI). Get package info, d
     :alt: Screenshot
     :target: http://konch.readthedocs.org
 
+Get it now
+==========
+::
+
+    $ pip install pypi-cli
+
+
+Requirements
+============
+
+- Python >= 2.7 or >= 3.3
 
 Examples
 ========
@@ -116,20 +127,7 @@ You can also get help with subcommands:
     $ pypi stat --help
 
 
-Get it now
-==========
-::
-
-    $ pip install pypi-cli
-
-
-
-Requirements
-============
-
-- Python >= 2.7 or >= 3.3
-
 License
 =======
 
-MIT licensed. See the bundled `LICENSE <https://github.com/sloria/pypi/blob/master/LICENSE>`_ file for more details.
+MIT licensed. See the bundled `LICENSE <https://github.com/sloria/pypi-cli/blob/master/LICENSE>`_ file for more details.
