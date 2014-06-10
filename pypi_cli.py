@@ -18,8 +18,10 @@ from collections import OrderedDict
 PY2 = int(sys.version[0]) == 2
 if PY2:
     from xmlrpclib import ServerProxy
+    from urllib import quote as urlquote
 else:
     from xmlrpc.client import ServerProxy
+    from urllib.parse import quote as urlquote
 
 import requests
 from dateutil.parser import parse as dateparse
@@ -27,7 +29,7 @@ import click
 from click import echo, style
 from click.termui import get_terminal_size
 
-__version__ = "0.1.0"
+__version__ = "0.2.0-dev"
 __author__ = "Steven Loria"
 __license__ = "MIT"
 
@@ -38,6 +40,7 @@ DEFAULT_PYPI = 'http://pypi.python.org/pypi'
 PYPI_RE = re.compile('''^(?:(?P<pypi>https?://[^/]+/pypi)/)?
                         (?P<name>[-A-Za-z0-9.]+)
                         (?:/(?P<version>[-A-Za-z0-9.]+))?$''', re.X)
+SEARCH_URL = 'https://pypi.python.org/pypi?%3Aaction=search&term={query}'
 
 # Number of characters added by bold formatting
 _BOLD_LEN = 8
@@ -167,12 +170,15 @@ def browse(package, homepage):
             url = p.package_url
     except NotFoundError:
         abort_not_found(package)
-    click.termui.launch(url)
+    click.launch(url)
 
 @cli.command()
-@click.option('--n-results', '-n', default=10, help='Max number of results to show.')
+@click.option('--web', '-w', is_flag=True, default=False,
+    help='Open search results in your web browser.')
+@click.option('--n-results', '-n', default=10,
+    help='Max number of results to show.')
 @click.argument('query', required=True, type=str)
-def search(query, n_results):
+def search(query, n_results, web):
     """Search for a pypi package.
 
     \b
@@ -181,13 +187,19 @@ def search(query, n_results):
         pypi search requests
         pypi search 'requests oauth'
         pypi search requests -n 20
+        pypi search 'requests toolbelt' --web
 
     """
-    searcher = Searcher()
-    results = searcher.search(query, n=n_results)
-    echof('Search results for "{0}"'.format(query), bold=True)
-    for result in results:
-        echo(style(result['name'], fg='cyan'))
+    if web:
+        echof('Opening search page for "{0}"...'.format(query), bold=True)
+        url = SEARCH_URL.format(query=urlquote(query))
+        click.launch(url)
+    else:
+        searcher = Searcher()
+        results = searcher.search(query, n=n_results)
+        echof('Search results for "{0}"'.format(query), bold=True)
+        for result in results:
+            echo(style(result['name'], fg='cyan'))
 
 
 

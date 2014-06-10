@@ -29,11 +29,26 @@ class TestBrowse:
         result = runner.invoke(pypi.cli, ['browse'])
         assert result.exit_code > 0
 
-    @mock.patch('pypi_cli.click.termui.launch')
+    @mock.patch('pypi_cli.click.launch')
     def test_with_package(self, mock_launch, runner):
         result = runner.invoke(pypi.cli, ['browse', 'webargs'])
         assert result.exit_code == 0
         assert mock_launch.called is True
+        mock_launch.assert_called_with('http://pypi.python.org/pypi/webargs')
+
+@pytest.mark.usefixtures('mock_api')
+class TestSearch:
+
+    def test_missing_package_arg(self, runner):
+        result = runner.invoke(pypi.cli, ['search'])
+        assert result.exit_code > 0
+
+    @mock.patch('pypi_cli.click.launch')
+    def test_with_package_web(self, mock_launch, runner):
+        result = runner.invoke(pypi.cli, ['search', '--web', "flask marshmallow"])
+        assert result.exit_code == 0, result.output
+        assert mock_launch.called is True
+        mock_launch.assert_called_with('https://pypi.python.org/pypi?%3Aaction=search&term=flask%20marshmallow')
 
 @pytest.mark.usefixtures('mock_api')
 class TestInfo:
