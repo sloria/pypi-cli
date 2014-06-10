@@ -204,12 +204,14 @@ def search(query, n_results, web):
 
 
 @cli.command()
+@click.option('--license/--no-license',
+    is_flag=True, default=True, help='Show license.')
 @click.option('--classifiers', '-c',
     is_flag=True, default=False, help='Show classifiers.')
-@click.option('--long-description', '-l',
+@click.option('--long-description', '-L',
     is_flag=True, default=False, help='Show long description.')
 @click.argument('package', nargs=-1, required=True)
-def info(package, long_description, classifiers):
+def info(package, long_description, classifiers, license):
     """Get info about a package or packages.
     """
     client = requests.Session()
@@ -229,7 +231,8 @@ def info(package, long_description, classifiers):
                 fg='red'), file=sys.stderr)
             continue
         echo_header(name_or_url)
-        echo(info.get('summary', ''))
+        if package.summary:
+            echo(package.summary)
 
         # Version info
         echo()
@@ -238,7 +241,7 @@ def info(package, long_description, classifiers):
         # Long description
         if long_description:
             echo()
-            echo(info['description'])
+            echo(package.description)
 
         # Download info
         echo()
@@ -246,14 +249,14 @@ def info(package, long_description, classifiers):
 
         # Author info
         echo()
-        author, author_email = info.get('author'), info.get('author_email')
+        author, author_email = package.author, package.author_email
         if author:
             echo('Author:   {author:12}'.format(**locals()))
         if author_email:
             echo('Author email: {author_email:12}'.format(**locals()))
 
         # Maintainer info
-        maintainer, maintainer_email = info.get('maintainer'), info.get('maintainer_email')
+        maintainer, maintainer_email = package.maintainer, package.maintainer_email
         if maintainer or maintainer_email:
             echo()
         if maintainer:
@@ -264,7 +267,8 @@ def info(package, long_description, classifiers):
         # URLS
         echo()
         echo('PyPI URL:  {pypi_url:12}'.format(pypi_url=package.package_url))
-        echo('Home Page: {home_page:12}'.format(home_page=package.home_page))
+        if package.home_page:
+            echo('Home Page: {home_page:12}'.format(home_page=package.home_page))
 
 
         # Classifiers
@@ -273,9 +277,16 @@ def info(package, long_description, classifiers):
             echo('Classifiers: ')
             for each in info.get('classifiers', []):
                 echo('\t' + each)
+
+        if license and package.license:
+            echo()
+            echo('License: ', nl=False)
+            # license may be just a name, e.g. 'BSD' or the full license text
+            # If a new line is found in the text, print a new line
+            if package.license.find('\n') >= 0 or len(package.license) > 80:
+                echo()
+            echo(package.license)
         echo()
-
-
 
 
 # Utilities
@@ -329,6 +340,9 @@ class PackageError(Exception):
 class NotFoundError(PackageError):
     pass
 
+
+# API Wrapper
+# ###########
 
 class Package(object):
 
@@ -425,6 +439,34 @@ class Package(object):
     def average_downloads(self):
         """Average number of downloads."""
         return int(self.downloads / len(self.versions))
+
+    @property
+    def author(self):
+        return self.data['info'].get('author', None)
+
+    @property
+    def description(self):
+        return self.data['info'].get('description', None)
+
+    @property
+    def summary(self):
+        return self.data['info'].get('summary', None)
+
+    @property
+    def author_email(self):
+        return self.data['info'].get('author_email', None)
+
+    @property
+    def maintainer(self):
+        return self.data['info'].get('maintainer', None)
+
+    @property
+    def maintainer_email(self):
+        return self.data['info'].get('maintainer_email', None)
+
+    @property
+    def license(self):
+        return self.data['info'].get('license', None)
 
     @property
     def downloads_last_day(self):
