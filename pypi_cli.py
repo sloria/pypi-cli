@@ -243,7 +243,6 @@ def info(package, long_description, classifiers):
         # Download info
         echo()
         echo_download_summary(package)
-        echo()
 
         # Author info
         echo()
@@ -252,6 +251,15 @@ def info(package, long_description, classifiers):
             echo('Author:   {author:12}'.format(**locals()))
         if author_email:
             echo('Author email: {author_email:12}'.format(**locals()))
+
+        # Maintainer info
+        maintainer, maintainer_email = info.get('maintainer'), info.get('maintainer_email')
+        if maintainer or maintainer_email:
+            echo()
+        if maintainer:
+            echo('Maintainer:   {maintainer:12}'.format(**locals()))
+        if maintainer_email:
+            echo('Maintainer email: {maintainer_email:12}'.format(**locals()))
 
         # URLS
         echo()
