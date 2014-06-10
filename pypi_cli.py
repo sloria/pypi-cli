@@ -38,7 +38,7 @@ MARGIN = 3
 TICK = '*'
 DEFAULT_PYPI = 'http://pypi.python.org/pypi'
 PYPI_RE = re.compile('''^(?:(?P<pypi>https?://[^/]+/pypi)/)?
-                        (?P<name>[-A-Za-z0-9.]+)
+                        (?P<name>[-A-Za-z0-9_.]+)
                         (?:/(?P<version>[-A-Za-z0-9.]+))?$''', re.X)
 SEARCH_URL = 'https://pypi.python.org/pypi?%3Aaction=search&term={query}'
 
