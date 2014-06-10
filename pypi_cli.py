@@ -58,7 +58,7 @@ def echof(s, *args, **kwargs):
     echo(style(s, *args, **kwargs))
 
 
-@click.group()
+@click.group(context_settings={'help_option_names': ('-h', '--help')})
 @click.option('--version', '-v',
     is_flag=True,
     callback=print_version,
