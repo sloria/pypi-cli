@@ -269,6 +269,8 @@ def info(package, long_description, classifiers, license):
         echo('PyPI URL:  {pypi_url:12}'.format(pypi_url=package.package_url))
         if package.home_page:
             echo('Home Page: {home_page:12}'.format(home_page=package.home_page))
+        if package.docs_url:
+            echo('Documentation: {docs_url:12}'.format(docs_url=package.docs_url))
 
 
         # Classifiers
@@ -442,31 +444,31 @@ class Package(object):
 
     @property
     def author(self):
-        return self.data['info'].get('author', None)
+        return self.data['info'].get('author')
 
     @property
     def description(self):
-        return self.data['info'].get('description', None)
+        return self.data['info'].get('description')
 
     @property
     def summary(self):
-        return self.data['info'].get('summary', None)
+        return self.data['info'].get('summary')
 
     @property
     def author_email(self):
-        return self.data['info'].get('author_email', None)
+        return self.data['info'].get('author_email')
 
     @property
     def maintainer(self):
-        return self.data['info'].get('maintainer', None)
+        return self.data['info'].get('maintainer')
 
     @property
     def maintainer_email(self):
-        return self.data['info'].get('maintainer_email', None)
+        return self.data['info'].get('maintainer_email')
 
     @property
     def license(self):
-        return self.data['info'].get('license', None)
+        return self.data['info'].get('license')
 
     @property
     def downloads_last_day(self):
@@ -486,7 +488,11 @@ class Package(object):
 
     @property
     def home_page(self):
-        return self.data['info'].get('home_page', None)
+        return self.data['info'].get('home_page')
+
+    @property
+    def docs_url(self):
+        return self.data['info'].get('docs_url')
 
     def __repr__(self):
         return '<Package(name={0!r})>'.format(self.name)
