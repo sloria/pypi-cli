@@ -31,6 +31,36 @@ Requirements
 Examples
 ========
 
+Get Package Info
+----------------
+
+Use the ``pypi info`` to get summary information for a package.
+
+.. code-block:: bash
+
+    $ pypi info matplotlib
+
+::
+
+    matplotlib
+    ==========
+    Python plotting package
+
+    Latest release:   1.3.1
+
+    Last day:           2,015
+    Last week:         16,744
+    Last month:        59,989
+
+    Author:   John D. Hunter, Michael Droettboom
+    Author email: mdroe@stsci.edu
+
+    PyPI URL:  http://pypi.python.org/pypi/matplotlib
+    Home Page: http://matplotlib.org
+
+    License: BSD
+
+
 Get Download Statistics
 -----------------------
 
@@ -38,39 +68,38 @@ Use the ``pypi stat`` command to get download statistics for a package.
 
 .. code-block:: bash
 
-    $ pypi stat marshmallow
+    $ pypi stat numpy
 
-.. code-block:: bash
+::
 
-    Fetching statistics for 'http://pypi.python.org/pypi/marshmallow'. . .
+    Fetching statistics for 'http://pypi.python.org/pypi/numpy'. . .
 
-    Download statistics for marshmallow
-    ===================================
+    Download statistics for numpy
+    =============================
 
     Downloads by version
-    0.1.0   13/11/11 [ 1,677 ] **********************************
-    0.2.0   13/11/12 [ 1,717 ] ***********************************
-    0.2.1   13/11/12 [ 1,671 ] **********************************
-    0.3.0   13/11/14 [ 1,620 ] *********************************
-    0.3.1   13/11/16 [ 1,559 ] ********************************
-    0.4.0   13/11/25 [ 1,508 ] *******************************
-    0.4.1   13/12/02 [ 1,620 ] *********************************
-    0.5.0   13/12/29 [ 1,796 ] *************************************
-    0.5.1   14/02/03 [ 1,340 ] ***************************
-    0.5.2   14/02/10 [ 2,441 ] *************************************************
-    0.5.3   14/03/03 [ 1,634 ] *********************************
-    0.5.4   14/04/18 [ 859   ] ******************
-    0.5.5   14/05/03 [ 991   ] ********************
-    0.6.0   14/06/04 [ 366   ] ********
+    1.0     06/12/02 [ 1,904     ] *
+    1.3.0   09/04/06 [ 34,900    ] **
+    1.4.1   10/04/24 [ 17,977    ] *
+    1.5.0   10/09/15 [ 23,462    ] **
+    1.5.1   10/11/18 [ 49,311    ] ***
+    1.6.0   11/05/14 [ 39,431    ] **
+    1.6.1   11/07/24 [ 168,287   ] ********
+    1.6.2   12/05/20 [ 374,288   ] ******************
+    1.7.0   13/02/12 [ 147,759   ] *******
+    1.7.1   13/04/07 [ 1,006,008 ] **********************************************
+    1.8.0   13/10/30 [ 513,208   ] ************************
+    1.7.2   13/12/31 [ 2,974     ] *
+    1.8.1   14/03/26 [ 356,674   ] *****************
 
-    Min downloads:            366 (0.6.0)
-    Max downloads:          2,441 (0.5.2)
-    Avg downloads:          1,485
-    Total downloads:       20,799
+    Min downloads:          1,904 (1.0)
+    Max downloads:      1,006,008 (1.7.1)
+    Avg downloads:        210,475
+    Total downloads:    2,736,183
 
-    Last day:              73
-    Last week:          1,464
-    Last month:         3,836
+    Last day:           3,901
+    Last week:         44,842
+    Last month:       182,480
 
 Browse to a Package's PyPI or homepage
 --------------------------------------
@@ -96,7 +125,7 @@ Use ``pypi search`` to search for PyPI packages.
 
     $ pypi search 'requests oauth'
 
-.. code-block:: bash
+::
 
     Search results for "requests oauth"
     suds_requests
