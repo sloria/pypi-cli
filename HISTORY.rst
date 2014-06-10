@@ -3,7 +3,7 @@ Changelog
 *********
 
 
-0.2.0 (unreleased)
+0.2.0 (2014-06-09)
 ==================
 
 - Add ``--web`` option to `search` command.

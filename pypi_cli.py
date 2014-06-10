@@ -29,7 +29,7 @@ import click
 from click import echo, style
 from click.termui import get_terminal_size
 
-__version__ = "0.2.0-dev"
+__version__ = "0.2.0"
 __author__ = "Steven Loria"
 __license__ = "MIT"
 
