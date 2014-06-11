@@ -34,7 +34,7 @@ Examples
 Get Package Info
 ----------------
 
-Use the ``pypi info`` to get summary information for a package.
+Use the ``pypi info`` command to get summary information for a package.
 
 .. code-block:: bash
 
