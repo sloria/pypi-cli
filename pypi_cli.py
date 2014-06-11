@@ -47,24 +47,13 @@ _BOLD_LEN = 8
 # Number of characters added by color formatting
 _COLOR_LEN = 9
 
-def print_version(ctx, param, value):
-    if not value or ctx.resilient_parsing:
-        return
-    echo(__version__)
-    ctx.exit()
-
 
 def echof(s, *args, **kwargs):
     echo(style(s, *args, **kwargs))
 
 
 @click.group(context_settings={'help_option_names': ('-h', '--help')})
-@click.option('--version', '-v',
-    is_flag=True,
-    callback=print_version,
-    expose_value=False,
-    is_eager=True,
-    help="Show the current pypi-cli version.")
+@click.version_option(__version__, '--version', '-v', message='%(version)s')
 def cli():
     """The pypi CLI.
 
