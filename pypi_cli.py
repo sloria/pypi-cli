@@ -523,7 +523,7 @@ class Searcher(object):
 
     def score(self, tokens, record):
         score = 0
-        name, summary = record['name'].lower(), record['summary'].lower()
+        name, summary = record['name'].lower(), record['summary']
         for token in tokens:
             qtf = 0
             if token == name:
@@ -532,8 +532,8 @@ class Searcher(object):
                 n_name_matches = len(re.compile(token).findall(name))
                 qtf += self.CONTAINS_NAME_MULT * n_name_matches
             if record['summary'] is not None:
-                n_summary_matches = len(re.compile(token).findall(summary))
-                qtf += 2 * n_summary_matches
+                summary_matches = re.compile(token).findall(summary.lower())
+                qtf += 2 * len(summary_matches)
             score += qtf
         return score
 
