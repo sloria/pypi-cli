@@ -2,6 +2,11 @@
 Changelog
 *********
 
+0.2.1 (2014-06-12)
+==================
+
+- Fix bug that caused a crash in search. Thanks Christian Pedersen for reporting.
+
 
 0.2.0 (2014-06-09)
 ==================
