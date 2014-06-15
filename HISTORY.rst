@@ -2,6 +2,12 @@
 Changelog
 *********
 
+0.2.2 (unreleased)
+==================
+
+- Fix bug that caused search to raise a `TypeError` on Python 3. Thanks @barrio for reporting.
+
+
 0.2.1 (2014-06-12)
 ==================
 

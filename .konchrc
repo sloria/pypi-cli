@@ -5,6 +5,9 @@ import requests
 import pypi_cli
 from pypi_cli import Package, Searcher
 import click
+import xmlrpclib
+
+client = xmlrpclib.ServerProxy('http://pypi.python.org/pypi')
 
 konch.config({
     'context': {
@@ -14,5 +17,7 @@ konch.config({
         'rpost': requests.post,
         'click': click,
         'Searcher': Searcher,
-    }
+        'client': client,
+    },
+    'prompt': '>>> '
 })
