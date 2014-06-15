@@ -540,5 +540,5 @@ class Searcher(object):
                 nd.append(result)
                 visited.append(name)
         ranked = [(self.score(tokens, result), result) for result in nd]
-        sorted_results = sorted(ranked, reverse=True)
+        sorted_results = sorted(ranked, reverse=True, key=lambda t: t[0])
         return (result for score, result in sorted_results[:n])
