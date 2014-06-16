@@ -13,6 +13,7 @@ from __future__ import unicode_literals, division, print_function
 import re
 import sys
 import time
+import textwrap
 import math
 from collections import OrderedDict
 PY2 = int(sys.version[0]) == 2
@@ -35,6 +36,8 @@ __license__ = "MIT"
 
 DATE_FORMAT = "%y/%m/%d"
 MARGIN = 3
+DEFAULT_SEARCH_RESULTS = 100
+
 TICK = '*'
 DEFAULT_PYPI = 'http://pypi.python.org/pypi'
 PYPI_RE = re.compile('''^(?:(?P<pypi>https?://[^/]+/pypi)/)?
@@ -161,10 +164,23 @@ def browse(package, homepage):
         abort_not_found(package)
     click.launch(url)
 
+def format_result(result, name_column_width=25):
+    name = result['name']
+    summary_wrapped = textwrap.wrap(
+        result['summary'],
+        width=click.get_terminal_size()[0] - name_column_width - MARGIN
+    )
+    padding = ' ' * (name_column_width + 3)
+    summary = ('\n' + padding).join(summary_wrapped)
+    return '{0} - {1}'.format(
+        style(name.ljust(name_column_width), fg='cyan', bold=True),
+        summary
+    )
+
 @cli.command()
 @click.option('--web', '-w', is_flag=True, default=False,
     help='Open search results in your web browser.')
-@click.option('--n-results', '-n', default=10,
+@click.option('--n-results', '-n', default=DEFAULT_SEARCH_RESULTS,
     help='Max number of results to show.')
 @click.argument('query', required=True, type=str)
 def search(query, n_results, web):
@@ -186,10 +202,11 @@ def search(query, n_results, web):
     else:
         searcher = Searcher()
         results = searcher.search(query, n=n_results)
-        echof('Search results for "{0}"'.format(query), bold=True)
-        for result in results:
-            echo(style(result['name'], fg='cyan'))
-
+        first_line = style('Search results for "{0}"\n'.format(query), bold=True)
+        click.echo_via_pager(
+            first_line +
+            '\n'.join([format_result(result) for result in results])
+        )
 
 
 @cli.command()
@@ -526,7 +543,7 @@ class Searcher(object):
             score += qtf
         return score
 
-    def search(self, query, n=10):
+    def search(self, query, n=None):
         tokens = [each.strip() for each in query.strip().lower().split()
                   if each not in self.STOP_WORDS]
         results = self.client.search({'name': tokens}, 'and')
@@ -541,4 +558,5 @@ class Searcher(object):
                 visited.append(name)
         ranked = [(self.score(tokens, result), result) for result in nd]
         sorted_results = sorted(ranked, reverse=True, key=lambda t: t[0])
-        return (result for score, result in sorted_results[:n])
+        limited_results = sorted_results[:n] if n else sorted_results
+        return (result for score, result in limited_results)

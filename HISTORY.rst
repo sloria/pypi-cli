@@ -2,10 +2,12 @@
 Changelog
 *********
 
-0.2.2 (unreleased)
+0.3.0 (unreleased)
 ==================
 
 - Fix bug that caused search to raise a `TypeError` on Python 3. Thanks @barrio for reporting.
+- Search command shows package summaries.
+- Search command shows all results in the pager.
 
 
 0.2.1 (2014-06-12)
