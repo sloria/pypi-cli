@@ -2,6 +2,12 @@
 Changelog
 *********
 
+0.3.1 (2014-06-18)
+==================
+
+- Disable pager for displaying search results until click has better support for ANSI styles in the pager. Thanks Arne Neumann for reporting.
+- Support newer versions of click. Thanks Juraj Bubniak for reporting.
+
 0.3.0 (2014-06-15)
 ==================
 
