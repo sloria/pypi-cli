@@ -17,7 +17,7 @@ def mock_api():
     # A valid package with a proper response
     responses.add(
         responses.GET,
-        'http://pypi.python.org/pypi/webargs/json',
+        'https://pypi.python.org/pypi/webargs/json',
         body=webargs_response,
         content_type='application/json'
     )
@@ -27,7 +27,7 @@ def mock_api():
 
     responses.add(
         responses.GET,
-        'http://pypi.python.org/pypi/foo/json',
+        'https://pypi.python.org/pypi/foo/json',
         body=foo_response,
         content_type='application/json'
     )
@@ -35,7 +35,7 @@ def mock_api():
     # An invalid package name
     responses.add(
         responses.GET,
-        'http://pypi.python.org/pypi/nope/json',
+        'https://pypi.python.org/pypi/nope/json',
         status=404
     )
     responses.start()
