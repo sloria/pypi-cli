@@ -167,7 +167,7 @@ def browse(package, homepage):
 def format_result(result, name_column_width=25):
     name = result['name']
     summary_wrapped = textwrap.wrap(
-        result['summary'],
+        result['summary'] or name,
         width=click.get_terminal_size()[0] - name_column_width - MARGIN
     )
     padding = ' ' * (name_column_width + 3)
