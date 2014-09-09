@@ -39,7 +39,7 @@ MARGIN = 3
 DEFAULT_SEARCH_RESULTS = 100
 
 TICK = '*'
-DEFAULT_PYPI = 'http://pypi.python.org/pypi'
+DEFAULT_PYPI = 'https://pypi.python.org/pypi'
 PYPI_RE = re.compile('''^(?:(?P<pypi>https?://[^/]+/pypi)/)?
                         (?P<name>[-A-Za-z0-9_.]+)
                         (?:/(?P<version>[-A-Za-z0-9.]+))?$''', re.X)
@@ -523,7 +523,7 @@ class Searcher(object):
     CONTAINS_NAME_MULT = 4
     NAME_IN_SUMMARY_MULT = 2
 
-    def __init__(self, pypi_url='http://pypi.python.org/pypi', client=None):
+    def __init__(self, pypi_url='https://pypi.python.org/pypi', client=None):
         self.pypi_url = pypi_url
         self.client = client or ServerProxy(pypi_url)
 

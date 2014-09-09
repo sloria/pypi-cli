@@ -18,7 +18,7 @@ class TestStat:
         assert 'Download statistics for webargs' in result.output
 
     def test_with_package_url(self, runner):
-        result = runner.invoke(pypi.cli, ['stat', 'http://pypi.python.org/pypi/webargs'])
+        result = runner.invoke(pypi.cli, ['stat', 'https://pypi.python.org/pypi/webargs'])
         assert result.exit_code == 0
         assert 'Download statistics for webargs' in result.output
 
@@ -63,7 +63,7 @@ class TestInfo:
         assert 'webargs' in result.output
 
     def test_with_package_url(self, runner):
-        result = runner.invoke(pypi.cli, ['info', 'http://pypi.python.org/pypi/webargs'])
+        result = runner.invoke(pypi.cli, ['info', 'https://pypi.python.org/pypi/webargs'])
         assert result.exit_code == 0
 
 def test_version(runner):
