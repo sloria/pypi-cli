@@ -2,6 +2,12 @@
 Changelog
 *********
 
+0.3.2 (2014-09-09)
+==================
+
+- Use HTTPS urls. Thanks Alex Gaynor.
+- Fix error in search when a package's summary is ``None``. Thanks Eric Lo.
+
 0.3.1 (2014-06-18)
 ==================
 
