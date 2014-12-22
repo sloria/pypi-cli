@@ -27,7 +27,7 @@ else:
 import requests
 from dateutil.parser import parse as dateparse
 import click
-from click import echo, style
+from click import echo, style, echo_via_pager
 from click.termui import get_terminal_size
 
 __version__ = '0.3.3'
@@ -203,7 +203,7 @@ def search(query, n_results, web):
         searcher = Searcher()
         results = searcher.search(query, n=n_results)
         first_line = style('Search results for "{0}"\n'.format(query), bold=True)
-        echo(
+        echo_via_pager(
             first_line +
             '\n'.join([format_result(result) for result in results])
         )

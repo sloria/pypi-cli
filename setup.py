@@ -7,7 +7,7 @@ from setuptools.command.test import test as TestCommand
 REQUIRES = [
     'requests>=2.3.0',
     'python-dateutil>=2.2',
-    'click>=2.0',
+    'click>=3.0',
 ]
 
 if 'win32' in str(sys.platform).lower():
