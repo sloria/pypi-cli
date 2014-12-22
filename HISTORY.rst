@@ -2,10 +2,11 @@
 Changelog
 *********
 
-0.3.3 (2014-12-22)
+0.4.0 (2014-12-22)
 ==================
 
 - Don't pin to python-dateutil==2.2.
+- Echo search results in pager.
 
 0.3.2 (2014-09-09)
 ==================
