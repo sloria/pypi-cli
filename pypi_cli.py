@@ -30,9 +30,9 @@ import click
 from click import echo, style
 from click.termui import get_terminal_size
 
-__version__ = "0.3.2"
-__author__ = "Steven Loria"
-__license__ = "MIT"
+__version__ = '0.3.3'
+__author__ = 'Steven Loria'
+__license__ = 'MIT'
 
 DATE_FORMAT = "%y/%m/%d"
 MARGIN = 3
