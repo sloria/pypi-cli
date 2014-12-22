@@ -6,7 +6,7 @@ from setuptools.command.test import test as TestCommand
 
 REQUIRES = [
     'requests>=2.3.0',
-    'python-dateutil==2.2',
+    'python-dateutil>=2.2',
     'click>=2.0',
 ]
 
