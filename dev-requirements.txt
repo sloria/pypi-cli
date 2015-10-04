@@ -4,3 +4,4 @@ pytest
 tox
 mock
 responses
+twine

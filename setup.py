@@ -57,8 +57,8 @@ setup(
     name='pypi-cli',
     version=__version__,
     description='A command-line interface to the Python Package Index (PyPI).',
-    long_description=(read("README.rst") + '\n\n' +
-                      read('HISTORY.rst')),
+    long_description=(read('README.rst') + '\n\n' +
+                      read('CHANGELOG.rst')),
     author='Steven Loria',
     author_email='sloria1@gmail.com',
     url='https://github.com/sloria/pypi-cli',
@@ -68,7 +68,6 @@ setup(
     include_package_data=True,
     keywords='pypi cli command line pipstat pip statistics download count metrics analytics',
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',

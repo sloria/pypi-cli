@@ -30,7 +30,7 @@ import click
 from click import echo, style, echo_via_pager
 from click.termui import get_terminal_size
 
-__version__ = '0.4.0'
+__version__ = '0.4.1dev'
 __author__ = 'Steven Loria'
 __license__ = 'MIT'
 
