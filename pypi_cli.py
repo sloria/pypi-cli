@@ -9,7 +9,7 @@
     :copyright: (c) 2014 by Steven Loria.
     :license: MIT, see LICENSE for more details.
 """
-from __future__ import unicode_literals, division, print_function
+from __future__ import division, print_function
 import re
 import sys
 import time
@@ -75,7 +75,7 @@ def cli():
 
 
 def abort_not_found(name):
-    raise click.ClickException('No versions of "{0}" were found. Please try '
+    raise click.ClickException(u'No versions of "{0}" were found. Please try '
         'your search again. NOTE: Case matters.'.format(name))
 
 def echo_header(text):
@@ -109,16 +109,16 @@ def stat(package, graph):
         package = get_package(name_or_url, client)
         if not package:
             echo(style(
-                'Invalid name or URL: "{name}"'.format(name=name_or_url), fg='red'),
+                u'Invalid name or URL: "{name}"'.format(name=name_or_url), fg='red'),
                 file=sys.stderr)
             continue
         try:
             version_downloads = package.version_downloads
         except NotFoundError:
-            echo(style('No versions found for "{0}". Skipping. . .'.format(package.name),
+            echo(style(u'No versions found for "{0}". Skipping. . .'.format(package.name),
                 fg='red'), file=sys.stderr)
             continue
-        echo("Fetching statistics for '{url}'. . .".format(url=package.package_url))
+        echo(u"Fetching statistics for '{url}'. . .".format(url=package.package_url))
         min_ver, min_downloads = package.min_version
         max_ver, max_downloads = package.max_version
         if min_ver is None or max_ver is None:
@@ -126,7 +126,7 @@ def stat(package, graph):
         avg_downloads = package.average_downloads
         total = package.downloads
         echo()
-        header = "Download statistics for {name}".format(name=package.name)
+        header = u'Download statistics for {name}'.format(name=package.name)
         echo_header(header)
         if graph:
             echo()
@@ -155,10 +155,10 @@ def browse(package, homepage):
     p = Package(package)
     try:
         if homepage:
-            echof('Opening homepage for "{0}"...'.format(package), bold=True)
+            echof(u'Opening homepage for "{0}"...'.format(package), bold=True)
             url = p.home_page
         else:
-            echof('Opening PyPI page for "{0}"...'.format(package), bold=True)
+            echof(u'Opening PyPI page for "{0}"...'.format(package), bold=True)
             url = p.package_url
     except NotFoundError:
         abort_not_found(package)
@@ -172,7 +172,7 @@ def format_result(result, name_column_width=25):
     )
     padding = ' ' * (name_column_width + 3)
     summary = ('\n' + padding).join(summary_wrapped)
-    return '{0} - {1}'.format(
+    return u'{0} - {1}'.format(
         style(name.ljust(name_column_width), fg='cyan', bold=True),
         summary
     )
@@ -196,13 +196,13 @@ def search(query, n_results, web):
 
     """
     if web:
-        echof('Opening search page for "{0}"...'.format(query), bold=True)
+        echof(u'Opening search page for "{0}"...'.format(query), bold=True)
         url = SEARCH_URL.format(query=urlquote(query))
         click.launch(url)
     else:
         searcher = Searcher()
         results = searcher.search(query, n=n_results)
-        first_line = style('Search results for "{0}"\n'.format(query), bold=True)
+        first_line = style(u'Search results for "{0}"\n'.format(query), bold=True)
         echo_via_pager(
             first_line +
             '\n'.join([format_result(result) for result in results])
@@ -225,7 +225,7 @@ def info(package, long_description, classifiers, license):
         package = get_package(name_or_url, client)
         if not package:
             echo(style(
-                'Invalid name or URL: "{name}"'.format(name=name_or_url), fg='red'),
+                u'Invalid name or URL: "{name}"'.format(name=name_or_url), fg='red'),
                 file=sys.stderr)
             continue
 
@@ -233,7 +233,7 @@ def info(package, long_description, classifiers, license):
         try:
             info = package.data['info']
         except NotFoundError:
-            echo(style('No versions found for "{0}". Skipping. . .'.format(package.name),
+            echo(style(u'No versions found for "{0}". Skipping. . .'.format(package.name),
                 fg='red'), file=sys.stderr)
             continue
         echo_header(name_or_url)
@@ -257,38 +257,38 @@ def info(package, long_description, classifiers, license):
         echo()
         author, author_email = package.author, package.author_email
         if author:
-            echo('Author:   {author:12}'.format(**locals()))
+            echo(u'Author:   {author:12}'.format(**locals()))
         if author_email:
-            echo('Author email: {author_email:12}'.format(**locals()))
+            echo(u'Author email: {author_email:12}'.format(**locals()))
 
         # Maintainer info
         maintainer, maintainer_email = package.maintainer, package.maintainer_email
         if maintainer or maintainer_email:
             echo()
         if maintainer:
-            echo('Maintainer:   {maintainer:12}'.format(**locals()))
+            echo(u'Maintainer:   {maintainer:12}'.format(**locals()))
         if maintainer_email:
-            echo('Maintainer email: {maintainer_email:12}'.format(**locals()))
+            echo(u'Maintainer email: {maintainer_email:12}'.format(**locals()))
 
         # URLS
         echo()
-        echo('PyPI URL:  {pypi_url:12}'.format(pypi_url=package.package_url))
+        echo(u'PyPI URL:  {pypi_url:12}'.format(pypi_url=package.package_url))
         if package.home_page:
-            echo('Home Page: {home_page:12}'.format(home_page=package.home_page))
+            echo(u'Home Page: {home_page:12}'.format(home_page=package.home_page))
         if package.docs_url:
-            echo('Documentation: {docs_url:12}'.format(docs_url=package.docs_url))
+            echo(u'Documentation: {docs_url:12}'.format(docs_url=package.docs_url))
 
 
         # Classifiers
         if classifiers:
             echo()
-            echo('Classifiers: ')
+            echo(u'Classifiers: ')
             for each in info.get('classifiers', []):
                 echo('\t' + each)
 
         if license and package.license:
             echo()
-            echo('License: ', nl=False)
+            echo(u'License: ', nl=False)
             # license may be just a name, e.g. 'BSD' or the full license text
             # If a new line is found in the text, print a new line
             if package.license.find('\n') >= 0 or len(package.license) > 80:
@@ -324,7 +324,7 @@ def bargraph(data, max_key_width=30):
         for val in data.values())
     term_width = get_terminal_size()[0]
     max_bar_width = term_width - MARGIN - (max_length + 3 + max_val_length + 3)
-    template = "{key:{key_width}} [ {value:{val_width}} ] {bar}"
+    template = u"{key:{key_width}} [ {value:{val_width}} ] {bar}"
     for key, value in data.items():
         try:
             bar = int(math.ceil(max_bar_width * value / max_val)) * TICK
@@ -523,7 +523,7 @@ class Searcher(object):
     CONTAINS_NAME_MULT = 4
     NAME_IN_SUMMARY_MULT = 2
 
-    def __init__(self, pypi_url='https://pypi.python.org/pypi', client=None):
+    def __init__(self, pypi_url=DEFAULT_PYPI, client=None):
         self.pypi_url = pypi_url
         self.client = client or ServerProxy(pypi_url)
 
