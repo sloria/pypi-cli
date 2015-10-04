@@ -2,6 +2,11 @@
 Changelog
 *********
 
+0.4.1 (unreleased)
+==================
+
+- Use explicit u'' prefix rather than importing unicode_literals from __future__ to avoid warnings from click on Py2.
+
 0.4.0 (2014-12-22)
 ==================
 
