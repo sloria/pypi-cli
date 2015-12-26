@@ -27,7 +27,7 @@ else:
 import requests
 from dateutil.parser import parse as dateparse
 import click
-from click import echo, style, echo_via_pager
+from click import echo, secho, style, echo_via_pager
 from click.termui import get_terminal_size
 
 __version__ = '0.4.1'
@@ -49,10 +49,6 @@ SEARCH_URL = 'https://pypi.python.org/pypi?%3Aaction=search&term={query}'
 _BOLD_LEN = 8
 # Number of characters added by color formatting
 _COLOR_LEN = 9
-
-
-def echof(s, *args, **kwargs):
-    echo(style(s, *args, **kwargs))
 
 
 @click.group(context_settings={'help_option_names': ('-h', '--help')})
@@ -155,10 +151,10 @@ def browse(package, homepage):
     p = Package(package)
     try:
         if homepage:
-            echof(u'Opening homepage for "{0}"...'.format(package), bold=True)
+            secho(u'Opening homepage for "{0}"...'.format(package), bold=True)
             url = p.home_page
         else:
-            echof(u'Opening PyPI page for "{0}"...'.format(package), bold=True)
+            secho(u'Opening PyPI page for "{0}"...'.format(package), bold=True)
             url = p.package_url
     except NotFoundError:
         abort_not_found(package)
@@ -196,7 +192,7 @@ def search(query, n_results, web):
 
     """
     if web:
-        echof(u'Opening search page for "{0}"...'.format(query), bold=True)
+        secho(u'Opening search page for "{0}"...'.format(query), bold=True)
         url = SEARCH_URL.format(query=urlquote(query))
         click.launch(url)
     else:
