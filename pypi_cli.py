@@ -75,8 +75,8 @@ def abort_not_found(name):
         'your search again. NOTE: Case matters.'.format(name))
 
 def echo_header(text):
-    echo(style(text, bold=True))
-    echo(style('=' * len(text), bold=True))
+    secho(text, bold=True)
+    secho('=' * len(text), bold=True)
 
 
 def get_package(name_or_url, client=None):
@@ -104,15 +104,15 @@ def stat(package, graph):
     for name_or_url in package:
         package = get_package(name_or_url, client)
         if not package:
-            echo(style(
-                u'Invalid name or URL: "{name}"'.format(name=name_or_url), fg='red'),
-                file=sys.stderr)
+            secho(u'Invalid name or URL: "{name}"'.format(name=name_or_url),
+                  fg='red', file=sys.stderr)
             continue
         try:
             version_downloads = package.version_downloads
         except NotFoundError:
-            echo(style(u'No versions found for "{0}". Skipping. . .'.format(package.name),
-                fg='red'), file=sys.stderr)
+            secho(u'No versions found for "{0}". '
+                  u'Skipping. . .'.format(package.name),
+                  fg='red', file=sys.stderr)
             continue
         echo(u"Fetching statistics for '{url}'. . .".format(url=package.package_url))
         min_ver, min_downloads = package.min_version
@@ -220,17 +220,17 @@ def info(package, long_description, classifiers, license):
     for name_or_url in package:
         package = get_package(name_or_url, client)
         if not package:
-            echo(style(
-                u'Invalid name or URL: "{name}"'.format(name=name_or_url), fg='red'),
-                file=sys.stderr)
+            secho(u'Invalid name or URL: "{name}"'.format(name=name_or_url),
+                  fg='red', file=sys.stderr)
             continue
 
         # Name and summary
         try:
             info = package.data['info']
         except NotFoundError:
-            echo(style(u'No versions found for "{0}". Skipping. . .'.format(package.name),
-                fg='red'), file=sys.stderr)
+            secho(u'No versions found for "{0}". '
+                  u'Skipping. . .'.format(package.name),
+                  fg='red', file=sys.stderr)
             continue
         echo_header(name_or_url)
         if package.summary:
