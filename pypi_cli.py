@@ -71,12 +71,14 @@ def cli():
 
 
 def abort_not_found(name):
-    raise click.ClickException(u'No versions of "{0}" were found. Please try '
-        'your search again. NOTE: Case matters.'.format(name))
+    raise click.ClickException(
+        u'No versions of "{0}" were found. Please try '
+        u'your search again. NOTE: Case matters.'.format(name))
+
 
 def echo_header(text):
-    echo(style(text, bold=True))
-    echo(style('=' * len(text), bold=True))
+    secho(text, bold=True)
+    secho('=' * len(text), bold=True)
 
 
 def get_package(name_or_url, client=None):
@@ -90,7 +92,7 @@ def get_package(name_or_url, client=None):
 
 @cli.command()
 @click.option('--graph/--no-graph', '-g/-q', default=True,
-    help="Output a graph of download counts.")
+              help="Output a graph of download counts.")
 @click.argument('package', nargs=-1, required=True)
 def stat(package, graph):
     """Print download statistics for a package.
@@ -104,17 +106,18 @@ def stat(package, graph):
     for name_or_url in package:
         package = get_package(name_or_url, client)
         if not package:
-            echo(style(
-                u'Invalid name or URL: "{name}"'.format(name=name_or_url), fg='red'),
-                file=sys.stderr)
+            secho(u'Invalid name or URL: "{name}"'.format(name=name_or_url),
+                  fg='red', file=sys.stderr)
             continue
         try:
             version_downloads = package.version_downloads
         except NotFoundError:
-            echo(style(u'No versions found for "{0}". Skipping. . .'.format(package.name),
-                fg='red'), file=sys.stderr)
+            secho(u'No versions found for "{0}". '
+                  u'Skipping. . .'.format(package.name),
+                  fg='red', file=sys.stderr)
             continue
-        echo(u"Fetching statistics for '{url}'. . .".format(url=package.package_url))
+        echo(u"Fetching statistics for '{url}'. . .".format(
+            url=package.package_url))
         min_ver, min_downloads = package.min_version
         max_ver, max_downloads = package.max_version
         if min_ver is None or max_ver is None:
@@ -129,18 +132,23 @@ def stat(package, graph):
             echo('Downloads by version')
             echo(package.chart())
         echo()
-        echo("Min downloads:   {min_downloads:12,} ({min_ver})".format(**locals()))
-        echo("Max downloads:   {max_downloads:12,} ({max_ver})".format(**locals()))
+        echo("Min downloads:   {min_downloads:12,} ({min_ver})".format(
+            **locals()))
+        echo("Max downloads:   {max_downloads:12,} ({max_ver})".format(
+            **locals()))
         echo("Avg downloads:   {avg_downloads:12,}".format(**locals()))
         echo("Total downloads: {total:12,}".format(**locals()))
         echo()
         echo_download_summary(package)
         echo()
 
+
 def echo_download_summary(package):
     echo('Last day:    {daily:12,}'.format(daily=package.downloads_last_day))
-    echo('Last week:   {weekly:12,}'.format(weekly=package.downloads_last_week))
-    echo('Last month:  {monthly:12,}'.format(monthly=package.downloads_last_month))
+    echo('Last week:   {weekly:12,}'.format(
+        weekly=package.downloads_last_week))
+    echo('Last month:  {monthly:12,}'.format(
+        monthly=package.downloads_last_month))
 
 
 @cli.command()
@@ -160,6 +168,7 @@ def browse(package, homepage):
         abort_not_found(package)
     click.launch(url)
 
+
 def format_result(result, name_column_width=25):
     name = result['name']
     summary_wrapped = textwrap.wrap(
@@ -173,11 +182,12 @@ def format_result(result, name_column_width=25):
         summary
     )
 
+
 @cli.command()
 @click.option('--web', '-w', is_flag=True, default=False,
-    help='Open search results in your web browser.')
+              help='Open search results in your web browser.')
 @click.option('--n-results', '-n', default=DEFAULT_SEARCH_RESULTS,
-    help='Max number of results to show.')
+              help='Max number of results to show.')
 @click.argument('query', required=True, type=str)
 def search(query, n_results, web):
     """Search for a pypi package.
@@ -198,7 +208,8 @@ def search(query, n_results, web):
     else:
         searcher = Searcher()
         results = searcher.search(query, n=n_results)
-        first_line = style(u'Search results for "{0}"\n'.format(query), bold=True)
+        first_line = style(u'Search results for "{0}"\n'.format(query),
+                           bold=True)
         echo_via_pager(
             first_line +
             '\n'.join([format_result(result) for result in results])
@@ -207,11 +218,11 @@ def search(query, n_results, web):
 
 @cli.command()
 @click.option('--license/--no-license',
-    is_flag=True, default=True, help='Show license.')
+              is_flag=True, default=True, help='Show license.')
 @click.option('--classifiers', '-c',
-    is_flag=True, default=False, help='Show classifiers.')
+              is_flag=True, default=False, help='Show classifiers.')
 @click.option('--long-description', '-L',
-    is_flag=True, default=False, help='Show long description.')
+              is_flag=True, default=False, help='Show long description.')
 @click.argument('package', nargs=-1, required=True)
 def info(package, long_description, classifiers, license):
     """Get info about a package or packages.
@@ -220,17 +231,17 @@ def info(package, long_description, classifiers, license):
     for name_or_url in package:
         package = get_package(name_or_url, client)
         if not package:
-            echo(style(
-                u'Invalid name or URL: "{name}"'.format(name=name_or_url), fg='red'),
-                file=sys.stderr)
+            secho(u'Invalid name or URL: "{name}"'.format(name=name_or_url),
+                  fg='red', file=sys.stderr)
             continue
 
         # Name and summary
         try:
             info = package.data['info']
         except NotFoundError:
-            echo(style(u'No versions found for "{0}". Skipping. . .'.format(package.name),
-                fg='red'), file=sys.stderr)
+            secho(u'No versions found for "{0}". '
+                  u'Skipping. . .'.format(package.name),
+                  fg='red', file=sys.stderr)
             continue
         echo_header(name_or_url)
         if package.summary:
@@ -258,7 +269,8 @@ def info(package, long_description, classifiers, license):
             echo(u'Author email: {author_email:12}'.format(**locals()))
 
         # Maintainer info
-        maintainer, maintainer_email = package.maintainer, package.maintainer_email
+        maintainer, maintainer_email = (package.maintainer,
+                                        package.maintainer_email)
         if maintainer or maintainer_email:
             echo()
         if maintainer:
@@ -270,10 +282,11 @@ def info(package, long_description, classifiers, license):
         echo()
         echo(u'PyPI URL:  {pypi_url:12}'.format(pypi_url=package.package_url))
         if package.home_page:
-            echo(u'Home Page: {home_page:12}'.format(home_page=package.home_page))
+            echo(u'Home Page: {home_page:12}'.format(
+                home_page=package.home_page))
         if package.docs_url:
-            echo(u'Documentation: {docs_url:12}'.format(docs_url=package.docs_url))
-
+            echo(u'Documentation: {docs_url:12}'.format(
+                docs_url=package.docs_url))
 
         # Classifiers
         if classifiers:
@@ -307,8 +320,10 @@ def lazy_property(fn):
         return getattr(self, attr_name)
     return _lazy_property
 
+
 def _style_value(value):
     return style('{:,}'.format(value), fg='yellow')
+
 
 def bargraph(data, max_key_width=30):
     """Return a bar graph as a string, given a dictionary of data."""
@@ -353,7 +368,8 @@ class Package(object):
     def __init__(self, name, client=None, pypi_url=DEFAULT_PYPI):
         self.client = client or requests.Session()
         self.name = name
-        self.url = '{pypi_url}/{name}/json'.format(pypi_url=pypi_url, name=name)
+        self.url = '{pypi_url}/{name}/json'.format(pypi_url=pypi_url,
+                                                   name=name)
 
     @lazy_property
     def data(self):
@@ -403,8 +419,8 @@ class Package(object):
             date = self.version_dates.get(version)
             date_formatted = ''
             if date:
-                date_formatted = time.strftime(DATE_FORMAT,
-                    self.version_dates[version].timetuple())
+                date_formatted = time.strftime(
+                    DATE_FORMAT, self.version_dates[version].timetuple())
             key = "{0:20} {1}".format(
                 style_version(version),
                 date_formatted
@@ -503,7 +519,7 @@ class Package(object):
 class Searcher(object):
     """PyPI package search wrapper that uses the PyPI's XMLRPC API.
 
-    Search algorithm adapted from Supreet Sethi's implementation (MIT Licensed).
+    Search algorithm adapted from Supreet Sethi's implementation(MIT Licensed).
     https://github.com/djinn/pypi-json/blob/master/LICENSE.md
     """
 
